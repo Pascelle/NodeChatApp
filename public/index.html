@@ -1,4 +1,4 @@
- <!––  this is the markup page that gets served when someone visits the site ––>
+ <!--  this is the markup page that gets served when someone visits the site -->
 
  <!DOCTYPE html>
 
@@ -9,9 +9,28 @@
  	</head>
  	<body>
  	<p>Welcome to the chat app</p>
+
+ 	<!-- below: loads the localhost:3000/socket.io/socket.io.js file.  This file is relative to our server -->
+ 	<script src="/socket.io/socket.io.js"></script>
+
+ 	<!-- below: this script loads a method that allows us to initiate a connection request -->
+ 	<script>
+ 		var socket = io();
+ 		//available to us bc we loaded in socket.io.  When we call it we are innitiating the request from the client to the server to open up a web socket and keep that connection open.   What we gets back from io() is important and should be stored in a var.  var socket allows us to listen for data from the server and send data to the server.
+
+ 		socket.on('connect', () => {
+ 			//we don't get a socket argument here bc we already have it above
+ 			console.log('Connected to server')
+ 		});
+
+ 		socket.on('disconnect', () => {
+ 			console.log('disconnected from server');
+ 		});
+ 	</script>
+
   	</body>
 
-  	
+
  </html>
 
 
