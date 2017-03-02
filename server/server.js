@@ -36,13 +36,29 @@ io.on('connection', (socket) => {
 	console.log('new user connected');
 //this lets you register an event listener.  This lets you listen for a connection to the server and when that connection comes in it deploys the callback fcn.  The socket argument represents the individual socket as opposed to all the users connected to the server.
 
+	//below: this creates an event.  Second argument specifies the data
+	socket.emit('newMessage', {
+		from: 'Noob',
+		text: 'Hey, What is the deal noob',
+		createdAt: 456
+	});
+
+	socket.on('createMessage', (message) => {
+		console.log('createMessage: ', message);
+	});
+
 	socket.on('disconnect', () => {
 		console.log('user was disconnected');
 	});
+
+	
+	
 });
-
-
 
 server.listen(port, () => {
 	console.log(`Server is up on port ${port}`);
 });
+
+//newMessage, emit from server, emit when user connects, listen to it on the client, on the client print console.log got the message data: from, text, createdAt
+
+//createMessage, from client to server, client fires createMessage event to the server, server then fires newMessage events to everyone else so they can see the message.  createMessage event emitted from client, server is listening for. DATA: from, text
