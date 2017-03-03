@@ -54,8 +54,8 @@ io.on('connection', (socket) => {
 		console.log('createMessage: ', message);
 		io.emit('newMessage', generateMessage(message.from, message.text)); 
 			// 	when createMessage happens over on the client, a newMessage is created by the server containing some of the data from the client
-		callback('This is from the server');
-			//this is the other half of the event acknowledgment.  Callback () sends an event back to the front end and it is going to call the fcn as we have it here (which is the console.log over in index.js), with its string passed into that function.  This means we can create a var for that value, over in index.js we call it data, and print it to the screen.  
+		callback();
+			//this is the other half of the event acknowledgment.  Callback () sends an event back to the front end and it is going to call the fcn as we have it here (which is the console.log over in index.js).  If we want we can pass a string into that function and it would make it over to the index.js fcn.  This means we can create a var for the argument value over in index.js, let's say we call it data, and print it to the screen via console.log 
 			//Server acknolwedges that it got the data by calling callback
 	});
 

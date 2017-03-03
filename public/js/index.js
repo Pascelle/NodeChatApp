@@ -56,16 +56,19 @@ socket.on('newLocationMessage', function (message) {
 // 		console.log('Got it', data);
 	// }); 
 
+var messageTextbox = $('[name=message]');
+
 $('#message-form').on('submit', function (e) {
 	//e is the event argument that we need to access in order to override the default behavior that causes the page refresh as soon as someone hits send.
 	e.preventDefault();
 	//now that we overrode the default behavior we call socket.emit
 	socket.emit('createMessage', {
 		from: 'User',
-		text: $('[name=message]').val()
+		text: messageTextbox.val()
 		//jQuery [attribute=value] 
 	}, function () {
-		//the event acknowledgement.  awaits the callback from the server
+		//the event acknowledgement.  awaits the callback from the server, but here we are going to wipe out the field
+		messageTextbox.val('')
 	});
 });
 
@@ -76,14 +79,19 @@ locationButton.on('click', function () {
 		return alert('Geolocation not supported by your browser');
 	} //fetching a user's position.  Takes two arguments: success, failure
 
+	locationButton.attr('disabled', 'disabled').text('Sending location...');
+	//attr is a jquery method.  disable button to keep people from spamming
+
 	navigator.geolocation.getCurrentPosition(function (position) {
-		console.log(position);
+		locationButton.removeAttr('disabled').text('Send location');
+		//this is revive the location button after a position is fetched
 		socket.emit('createLocationMessage', {
 			latitude: position.coords.latitude,
 			longitude: position.coords.longitude
 		});
 
 	}, function () {
+		locationButton.removeAttr('disabled').text('Send location');
 		alert('Unable to fetch location');
 	});
 });
