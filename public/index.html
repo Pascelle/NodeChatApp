@@ -11,9 +11,18 @@
  	<body>
  		<p>Welcome to the chat app</p>
 
+ 		<ol id="messages"></ol>
+
+ 		<form id="message-form">
+ 			<input name="message" type="text" placeholder="Message"/> 
+ 			<!-- name, type are called attributes -->
+ 			<!-- we use a selfe closing tag bc we don't need it to say anything like we do with button -->
+ 			<button>Send</button>
+ 		</form>
+
  		<!-- below: loads the localhost:3000/socket.io/socket.io.js file.  This file is relative to our server -->
  		<script src="/socket.io/socket.io.js"></script>
-
+ 		<script src="/js/libs/jquery-3.1.1.min.js"></script>
  		<script src="/js/index.js"></script>
  	
   	</body>
