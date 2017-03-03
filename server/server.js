@@ -12,6 +12,8 @@ const express = require('express');
 //Express makes it easy to set up an HTTP server
 const socketIO = require('socket.io');
 
+const {generateMessage} = require('./utils/message');
+
 const publicPath = path.join(__dirname, '../public');
 //takes two arguments: directory name (here it is server), the relative path (up one to node-chat-app) and folder you go into (here it is public)
 
@@ -34,39 +36,29 @@ app.use(express.static(publicPath));
 
 io.on('connection', (socket) => {
 	console.log('new user connected');
-//this lets you register an event listener.  This lets you listen for a connection to the server and when that connection comes in it deploys the callback fcn.  The socket argument represents the individual socket as opposed to all the users connected to the server.
+		//this lets you register an event listener.  This lets you listen for a connection to the server and when that connection comes in it deploys the callback fcn.  The socket argument represents the individual socket as opposed to all the users connected to the server.
 
-	socket.emit('newMessage', {
-			from: 'Admin',
-			text: 'Welcome to the chat app',
-			createdAt: new Date().getTime()
-		});
-//the above sends a greeting to a user that joins the chat
+	socket.emit('newMessage', generateMessage('Admin', 'Welcome to the chat app'));
+		//the above sends a greeting to a user that joins the chat
+		//message.js in the utils folder contains a method to create the message object
 
-	socket.broadcast.emit('newMessage', {
-		from: 'Admin',
-		text: 'New user joined',
-		createdAt: new Date().getTime()
-	});
+	socket.broadcast.emit('newMessage', generateMessage('Admin', 'New user joined'));
+		//socket.broadcast.emit sends a message that there is a new user to everyone but the sender
+		//socket.emit emits an event to a single connection, io.emit emits an event to all connections
+		//TO BROADCAST: specify the individual socket that we don't want to get the event. socket.broadcast.emit() gets sent to everybody but the socket object originating the broadcast
 
 	socket.on('createMessage', (message) => {
 		//listening for client to create message, when they do, callback called w/ message object containing data from client
+
 		console.log('createMessage: ', message);
-		// io.emit('newMessage', {
-		// 	//when createMessage happens over on the client, a newMessage is created by the server containing some of the data from the client
-		// 	from: message.from,
-		// 	text: message.text,
-		// 	createdAt: new Date().getTime()
-		// });
-		//socket.emit emits an event to a single connection, io.emit emits an event to all connections
-
-		//TO BROADCAST: specify the individual socket that we don't want to get the event. socket.broadcast.emit() gets sent to everybody but the socket object originating the broadcast
-
-		socket.broadcast.emit('newMessage', {
-			from: message.from,
-			text: message.text,
-			createdAt: new Date().getTime()
-		});
+		io.emit('newMessage', generateMessage(message.from, message.text)) 
+			// 	when createMessage happens over on the client, a newMessage is created by the server containing some of the data from the client
+		
+			// socket.broadcast.emit('newMessage', {
+			// 	from: message.from,
+			// 	text: message.text,
+			// 	createdAt: new Date().getTime()
+			// });
 	});
 
 	socket.on('disconnect', () => {
@@ -81,6 +73,3 @@ server.listen(port, () => {
 	console.log(`Server is up on port ${port}`);
 });
 
-//newMessage, emit from server, emit when user connects, listen to it on the client, on the client print console.log got the message data: from, text, createdAt
-
-//createMessage, from client to server, client fires createMessage event to the server, server then fires newMessage events to everyone else so they can see the message.  createMessage event emitted from client, server is listening for. DATA: from, text
