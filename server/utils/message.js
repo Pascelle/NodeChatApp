@@ -13,6 +13,14 @@ var generateMessage = (from, text) => {
 	};
 };
 
-module.exports = {generateMessage};
+var generateLocationMessage = (from, latitude, longitude) => {
+	return {
+		from, 
+		url: `https://www.google.com/maps?q=${latitude},${longitude}`,
+		createdAt: new Date().getTime()
+	};
+};
+
+module.exports = {generateMessage, generateLocationMessage};																																																																																																																																																																																																																																				module.exports = {generateMessage, generateLocationMessage};
 
 //we created this method, then we tested it in message.test.js.  Once we confirmed that it worked we integrated it into server.js

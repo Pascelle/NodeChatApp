@@ -12,7 +12,7 @@ const express = require('express');
 //Express makes it easy to set up an HTTP server
 const socketIO = require('socket.io');
 
-const {generateMessage} = require('./utils/message');
+const {generateMessage, generateLocationMessage} = require('./utils/message');
 
 const publicPath = path.join(__dirname, '../public');
 //takes two arguments: directory name (here it is server), the relative path (up one to node-chat-app) and folder you go into (here it is public)
@@ -57,14 +57,11 @@ io.on('connection', (socket) => {
 		callback('This is from the server');
 			//this is the other half of the event acknowledgment.  Callback () sends an event back to the front end and it is going to call the fcn as we have it here (which is the console.log over in index.js), with its string passed into that function.  This means we can create a var for that value, over in index.js we call it data, and print it to the screen.  
 			//Server acknolwedges that it got the data by calling callback
-		
+	});
 
-
-			// socket.broadcast.emit('newMessage', {
-			// 	from: message.from,
-			// 	text: message.text,
-			// 	createdAt: new Date().getTime()
-			// });
+	socket.on('createLocationMessage', (coords) => {
+		io.emit('newLocationMessage', generateLocationMessage('Admin', coords.latitude, coords.longitude));
+		//we email the newLocationMessage along with the object we defined in message.js
 	});
 
 	socket.on('disconnect', () => {

@@ -36,6 +36,17 @@ socket.on('newMessage', function (message) {
 
 });
 
+socket.on('newLocationMessage', function (message) {
+	var li = $('<li></li>');
+	var a = $('<a target="_blank">My current location</a>');
+
+	li.text(`${message.from}: `);
+	a.attr('href', message.url);
+	//updating anchor tag.  you can set and fetch attributes on your jquery selected elements using this method.  If you provide one argument, like target, it fetches the value in which case it would return the "_blank", if you provide two arguments it sets the value
+	li.append(a);
+	$('#messages').append(li);
+});
+
 // //Below is one half of an event acknowledgement.  The other half is in server.js.  It is accomplished via the callback fcn
 	// socket.emit('createMessage', {
 	// 	from: 'Frank',
@@ -55,7 +66,24 @@ $('#message-form').on('submit', function (e) {
 		//jQuery [attribute=value] 
 	}, function () {
 		//the event acknowledgement.  awaits the callback from the server
-
 	});
+});
 
+var locationButton = $('#send-location');
+locationButton.on('click', function () {
+	//need to find out if user has access to geolocation API
+	if (!navigator.geolocation) {
+		return alert('Geolocation not supported by your browser');
+	} //fetching a user's position.  Takes two arguments: success, failure
+
+	navigator.geolocation.getCurrentPosition(function (position) {
+		console.log(position);
+		socket.emit('createLocationMessage', {
+			latitude: position.coords.latitude,
+			longitude: position.coords.longitude
+		});
+
+	}, function () {
+		alert('Unable to fetch location');
+	});
 });
