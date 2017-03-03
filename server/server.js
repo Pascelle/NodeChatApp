@@ -36,16 +36,37 @@ io.on('connection', (socket) => {
 	console.log('new user connected');
 //this lets you register an event listener.  This lets you listen for a connection to the server and when that connection comes in it deploys the callback fcn.  The socket argument represents the individual socket as opposed to all the users connected to the server.
 
+	socket.emit('newMessage', {
+			from: 'Admin',
+			text: 'Welcome to the chat app',
+			createdAt: new Date().getTime()
+		});
+//the above sends a greeting to a user that joins the chat
+
+	socket.broadcast.emit('newMessage', {
+		from: 'Admin',
+		text: 'New user joined',
+		createdAt: new Date().getTime()
+	});
+
 	socket.on('createMessage', (message) => {
 		//listening for client to create message, when they do, callback called w/ message object containing data from client
 		console.log('createMessage: ', message);
-		io.emit('newMessage', {
-			//when createMessage happens over on the client, a newMessage is created by the server containing some of the data from the client
+		// io.emit('newMessage', {
+		// 	//when createMessage happens over on the client, a newMessage is created by the server containing some of the data from the client
+		// 	from: message.from,
+		// 	text: message.text,
+		// 	createdAt: new Date().getTime()
+		// });
+		//socket.emit emits an event to a single connection, io.emit emits an event to all connections
+
+		//TO BROADCAST: specify the individual socket that we don't want to get the event. socket.broadcast.emit() gets sent to everybody but the socket object originating the broadcast
+
+		socket.broadcast.emit('newMessage', {
 			from: message.from,
 			text: message.text,
 			createdAt: new Date().getTime()
 		});
-		//socket.emit emits an event to a single connection, io.emit emits an event to all connections
 	});
 
 	socket.on('disconnect', () => {
