@@ -28,9 +28,10 @@ socket.on('disconnect', function () {
 // });
 
 socket.on('newMessage', function (message) {
-	console.log('newMessage', message);
+	var formattedTime = moment(message.CreatedAt).format('h:mm a');
+
 	var li = $('<li></li>');
-	li.text(`${message.from}: ${message.text}`);
+	li.text(`${message.from} ${formattedTime}: ${message.text}`);
 
 	$('#messages').append(li);	
 
@@ -39,8 +40,9 @@ socket.on('newMessage', function (message) {
 socket.on('newLocationMessage', function (message) {
 	var li = $('<li></li>');
 	var a = $('<a target="_blank">My current location</a>');
+	var formattedTime = moment(message.CreatedAt).format('h:mm a');
 
-	li.text(`${message.from}: `);
+	li.text(`${message.from} ${formattedTime}: `);
 	a.attr('href', message.url);
 	//updating anchor tag.  you can set and fetch attributes on your jquery selected elements using this method.  If you provide one argument, like target, it fetches the value in which case it would return the "_blank", if you provide two arguments it sets the value
 	li.append(a);
