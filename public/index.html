@@ -31,12 +31,38 @@
  			</div>
  		</div>
 
+ 		<script id="message-template" type="text/template">
+ 			<li class="message"></li>
+ 				<div class="message__title"></div>
+ 					<h4>{{from}}</h4>
+ 					<span>{{createdAt}}</span>
+ 				<div class="message__body">
+
+ 					<p>{{text}}</p>
+ 				</div>
+ 			<!-- Mustache lets you pass in a value using {{}}.  to use the value pass it in the render method over in index.js -->
+ 		</script>
+
+ 		<script id="location-message-template" type="text/template">
+ 			<li class="message"></li>
+ 				<div class="message__title"></div>
+ 					<h4>{{from}}</h4>
+ 					<span>{{createdAt}}</span>
+ 				<div class="message__body">
+ 					<p>
+ 						<a href="{{url}}" target="_blank">My current location </a>
+					</p>
+ 				</div>
+ 			<!-- Mustache lets you pass in a value using {{}}.  to use the value pass it in the render method over in index.js -->
+ 		</script>
+
 
  		
  		<!-- below: loads the localhost:3000/socket.io/socket.io.js file.  This file is relative to our server -->
  		<script src="/socket.io/socket.io.js"></script>
  		<script src="/js/libs/jquery-3.1.1.min.js"></script>
  		<script src="/js/libs/moment.js"></script>
+ 		<script src="/js/libs/mustache.js"></script>
  		<script src="/js/index.js"></script>
  	
   	</body>

@@ -29,24 +29,49 @@ socket.on('disconnect', function () {
 
 socket.on('newMessage', function (message) {
 	var formattedTime = moment(message.CreatedAt).format('h:mm a');
+	var template = $('#message-template').html();
+	//html method returns the markup inside of message-template. Message-template is inside of index.html
+	var html = Mustache.render(template, {
+		text: message.text,
+		from: message.from,
+		createdAt: formattedTime
+	});
+	//takes the template you want to render it and then you can spit it out in the browser by adding it to the message's ID
+	//the second argument is an object that lists all of the properties that you are allowed to render
+	//the template serves as the reusable structure but the data will change bc it gets passed in when we call render
 
-	var li = $('<li></li>');
-	li.text(`${message.from} ${formattedTime}: ${message.text}`);
+	$('#messages').append(html);
+		
+		/*/ COMMENTED OUT IN FAVOR OF MUSTACHE.HS /*/
+		// var formattedTime = moment(message.CreatedAt).format('h:mm a');
 
-	$('#messages').append(li);	
+		// var li = $('<li></li>');
+		// li.text(`${message.from} ${formattedTime}: ${message.text}`);
+
+		// $('#messages').append(li);	
 
 });
 
 socket.on('newLocationMessage', function (message) {
-	var li = $('<li></li>');
-	var a = $('<a target="_blank">My current location</a>');
+	// var li = $('<li></li>');
+	// var a = $('<a target="_blank">My current location</a>');
+
+	var template = $('#location-message-template').html();
 	var formattedTime = moment(message.CreatedAt).format('h:mm a');
 
-	li.text(`${message.from} ${formattedTime}: `);
-	a.attr('href', message.url);
-	//updating anchor tag.  you can set and fetch attributes on your jquery selected elements using this method.  If you provide one argument, like target, it fetches the value in which case it would return the "_blank", if you provide two arguments it sets the value
-	li.append(a);
-	$('#messages').append(li);
+		var html = Mustache.render(template, {
+		url: message.url,
+		from: message.from,
+		createdAt: formattedTime
+	});
+
+	$('#messages').append(html);
+
+		// li.text(`${message.from} ${formattedTime}: `);
+		// a.attr('href', message.url);
+		// //updating anchor tag.  you can set and fetch attributes on your jquery selected elements using this method.  If you provide one argument, like target, it fetches the value in which case it would return the "_blank", if you provide two arguments it sets the value
+		// li.append(a);
+		// $('#messages').append(li);
 });
 
 // //Below is one half of an event acknowledgement.  The other half is in server.js.  It is accomplished via the callback fcn
