@@ -33,9 +33,19 @@ function scrollToBottom () {
 
 socket.on('connect', function () {
 	//we don't get a socket argument here bc we already have it above
-	console.log('Connected to server');
+	var params = jQuery.deparam(window.location.search);
+	socket.emit('join', params, function (err) {
+		if (err) {
+			alert(err); //maybe you can pass in a modal using bootstrap to pop up the error
+			window.location.href = '/';
+			//we can manipulate what page the user is on.  Here we are redirecting them onto the root page
+		} else {
+			console.log('no error')
+		};
+	});
+	//arguments: event name, params object, acknowledgements if someone does or doesn't join the room (doesn't join probably gave invalid data)
 
-	
+	//this is going to start the process of having separate chat rooms, although server.js does the heavy lifting.  It's a custom emit event.  When the server hears the join event it is going to go through the process of setting up the room
 });
 
 socket.on('disconnect', function () {
@@ -46,6 +56,16 @@ socket.on('disconnect', function () {
 // 	//the data sent as the second argument to the emit call over in server.js is the argument here, then we can do what we want with it-- like add it to a list of emails
 // 	console.log('New email', email);
 // });
+
+socket.on('updateUserList', function (users) {
+	var ol = $('<ol></ol>');
+
+	users.forEach(function (user) {
+		ol.append($('<li></li>').text(user));
+	});
+	$('#users').html(ol);
+	//we're using html as opposed to append bc we want to completely wipe the list, replacing it with the new version
+});
 
 socket.on('newMessage', function (message) {
 	var formattedTime = moment(message.CreatedAt).format('h:mm a');
