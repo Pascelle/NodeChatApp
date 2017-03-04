@@ -130,7 +130,6 @@ $('#message-form').on('submit', function (e) {
 	e.preventDefault();
 	//now that we overrode the default behavior we call socket.emit
 	socket.emit('createMessage', {
-		from: 'User',
 		text: messageTextbox.val()
 		//jQuery [attribute=value] 
 	}, function () {

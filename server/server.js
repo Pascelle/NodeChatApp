@@ -49,10 +49,21 @@ io.on('connection', (socket) => {
 
 	socket.on('createMessage', (message, callback) => {
 		//listening for client to create message, when they do, callback called w/ message object containing data from client
+		var user = users.getUser(socket.id);
+		//remember we create an instance of the Users class and stored it in var users up above
+		//getUser created over in user.js
+		//this retrieves the name of the user
 
-		console.log('createMessage: ', message);
-		io.emit('newMessage', generateMessage(message.from, message.text)); 
+
+		if (user && isRealString(message.text)) {
+			io.to(user.room).emit('newMessage', generateMessage(user.name, message.text)); 
 			// 	when createMessage happens over on the client, a newMessage is created by the server containing some of the data from the client
+			//user.room is the room that the current user is in
+		}
+
+
+
+		
 		callback();
 			//this is the other half of the event acknowledgment.  Callback () sends an event back to the front end and it is going to call the fcn as we have it here (which is the console.log over in index.js).  If we want we can pass a string into that function and it would make it over to the index.js fcn.  This means we can create a var for the argument value over in index.js, let's say we call it data, and print it to the screen via console.log 
 			//Server acknolwedges that it got the data by calling callback
@@ -92,8 +103,14 @@ io.on('connection', (socket) => {
 	});
 
 	socket.on('createLocationMessage', (coords) => {
-		io.emit('newLocationMessage', generateLocationMessage('Admin', coords.latitude, coords.longitude));
+		var user = users.getUser(socket.id);
+		//users object created from the User class. fetching user by the id, which is stored in socket. 
+		//we know user has access to a room property (used below) because when it was created with the addUser function over in users.js it was given three arguments: id, name, room
+
+		if (user) {
+		io.to(user.room).emit('newLocationMessage', generateLocationMessage(user.name, coords.latitude, coords.longitude));
 		//we email the newLocationMessage along with the object we defined in message.js
+		}
 	});
 
 	socket.on('disconnect', () => {
